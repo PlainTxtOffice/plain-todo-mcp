@@ -1,0 +1,94 @@
+#:schema https://json.schemastore.org/pyproject.json
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plain-todo-mcp"
+version = "0.5.0"
+description = "Export agent conversations to a repo-local AGENT_TODO.md"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Plain Text Office LLC" }]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "todo",
+    "tasks",
+    "claude-code",
+    "codex",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+]
+dependencies = ["mcp>=2.2,<3", "filelock>=3.16"]
+
+[project.urls]
+Homepage = "https://github.com/PlainTxtOffice/plain-todo-mcp"
+Documentation = "https://github.com/PlainTxtOffice/plain-todo-mcp/blob/main/docs/USER_MANUAL.md"
+Issues = "https://github.com/PlainTxtOffice/plain-todo-mcp/issues"
+
+[project.scripts]
+plain-todo-mcp = "plain_todo_mcp.server:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.14", "rumdl>=0.0.170", "mypy>=1.18"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["plain_todo_mcp*"]
+
+[tool.pytest.ini_options]
+# Keep pytest temp folders in the system temp folder, outside this Git repo,
+# so code that looks for an enclosing repository root never finds this one.
+addopts = "-s"
+testpaths = ["tests"]
+tmp_path_retention_policy = "none"
+
+[tool.ruff]
+line-length = 80
+extend-exclude = ["tests"]
+# Apply the exclusion when the editor or a hook passes a file directly.
+force-exclude = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # No per-file copyright headers.
+    "CPY001",
+    # Conflicts with ruff format; its added commas stop calls from rejoining.
+    "COM812",
+    # Pick one of each conflicting docstring pair: D211 and D212 stay on.
+    "D203",
+    "D213",
+    "DOC201",
+    "DOC501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Pytest style: plain asserts, optional annotations, fixture-only arguments,
+# private access, and local imports are expected in tests.
+"tests/**" = [
+    "ANN",
+    "ARG001",
+    "ARG005",
+    "INP001",
+    "PLC0415",
+    "PLR2004",
+    "S101",
+    "SLF001",
+]
+
+[tool.mypy]
+exclude = ['(^|[\\/])tests([\\/]|$)']
+ignore_missing_imports = true

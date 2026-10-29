@@ -1,0 +1,21 @@
+# Shell scripts must keep LF endings; CRLF breaks them under sh.
+.githooks/* text eol=lf
+*.sh text eol=lf
+
+# Project text files use the repository-wide LF convention.
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.ignore text eol=lf
+.github-push text eol=lf
+LICENSE text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.ps1 text eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.svg text eol=lf
+*.png binary

@@ -1,0 +1,37 @@
+# Python-generated files
+*.py[oc]
+__pycache__/
+*.egg-info/
+build/
+dist/
+wheels/
+
+# virtual environments
+.venv**
+
+# tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.rumdl_cache/
+
+# local state from MCP servers used while developing, such as
+# plain-text-memory's .agents/ptm/
+.agents/ptm/
+.agents/*memory.local.*
+
+# lock files this server writes beside each AGENT_TODO.md
+AGENT_TODO.md.lock
+
+# client session transcripts; see data/feedback_from_clients/AGENTS.md
+data/feedback_from_clients/**
+!data/feedback_from_clients/AGENTS.md
+
+# files
+logs/
+*.pdf
+*.db
+.env
+.DS_Store
+dev-docs/prompt_template.md
+installing_nuitka.md
