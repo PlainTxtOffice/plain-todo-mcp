@@ -1,6 +1,6 @@
 ---
-last_updated: 2026-10-28
-version: 1.1.0
+last_updated: 2026-10-31
+version: 1.2.0
 product_version: "0.5.0"
 generated_from: "dev-docs/specs/USER_MANUAL_SPEC.instructions.md"
 ---
@@ -309,7 +309,7 @@ It returns:
 | --- | --- |
 | `path` | The absolute path of the `AGENT_TODO.md` it read |
 | `exists` | Whether the file exists yet |
-| `content` | The file's full text, or empty when it does not exist |
+| `content` | The file's full text without the front matter the server writes, or empty when it does not exist |
 | `revision` | A fingerprint of the file's exact content, or `missing` when it does not exist |
 | `recent_commits` | Up to 30 commits made since the file was last saved, newest first, each as a short hash and subject |
 | `due_tasks` | Open tasks whose `Check after:` date has arrived |
@@ -345,11 +345,13 @@ How an export is checked and written:
    changed the file since, the export is rejected and nothing is written.
 1. A root export must keep every link to a subfolder `AGENT_TODO.md` that
    still exists.
+1. The server's front matter block is written at the top of the file. Any
+   front matter in `content` is dropped and replaced, so it never doubles.
 1. The whole file is replaced in one step, so a failed write never leaves a
    half-written file. Saving identical content changes nothing.
 1. For a subfolder file, the server then adds a link to it in the root
    `AGENT_TODO.md`, creating the root file if needed.
-<!-- Verified from: src/plain_todo_mcp/storage.py [TodoStore.export, TodoStore._replace, TodoStore.link, check_kept_links] -->
+<!-- Verified from: src/plain_todo_mcp/storage.py [TodoStore.export, TodoStore._replace, TodoStore.link, check_kept_links, strip_front_matter, FRONT_MATTER] -->
 
 The export always replaces the whole file; it never appends. A missing file
 is created. Line endings are saved as `\n` and the file ends with one
@@ -499,6 +501,11 @@ between reading and exporting, its export is rejected and it reads the file
 again and redoes the merge, so your edit is not overwritten.
 <!-- Verified from: src/plain_todo_mcp/storage.py [TodoStore.export, TodoConflictError] -->
 
+The front matter block at the top tells agents that open the file directly
+to change it only through the server. Edit below it: the server rewrites the
+block on every save, so changes to it, or keys you add to it, are replaced.
+<!-- Verified from: src/plain_todo_mcp/storage.py [FRONT_MATTER, TodoStore._replace] -->
+
 ## Settings
 
 Plain Todo has one setting, an environment variable set in the server's
@@ -558,6 +565,14 @@ The server writes no logs and keeps no files outside your repo.
 A typical file looks like this:
 
 ```markdown
+---
+managed_by: plain-todo-mcp
+agent_instructions: >-
+  Agents change this file only through the plain-todo MCP server: call
+  read_todo, merge, then export_todo with the revision it returned.
+  People may edit it by hand. The server rewrites this block.
+---
+
 # Agent Todo
 
 ## Working Memory
@@ -583,6 +598,7 @@ File rules at a glance:
 
 | Part | Rule |
 | --- | --- |
+| Front matter | Written by the server above the title on every save; left out of `read_todo` content |
 | Title | `# Agent Todo` for a new file |
 | `## Working Memory` | Optional; directly under the title, closed by `---`; only `Now:`, `Next:`, `Blockers:` bullets; at most 12 lines |
 | Task | `- [ ] text` (open) or `- [x] text` (done); indented lines below belong to it |
@@ -590,7 +606,7 @@ File rules at a glance:
 | A heading named Done | Only `- [x]` tasks, including under its subheadings |
 | `## Waiting` | Each open task needs a `Check after:` date, and should say what it is `Waiting on:` |
 | `## Subdirectory Todos` | Links to subfolder files; added by the server |
-<!-- Verified from: src/plain_todo_mcp/storage.py [check_working_memory, parse_tasks, check_task_sections, with_link]; src/plain_todo_mcp/server.py [EXPORT_WORKFLOW] -->
+<!-- Verified from: src/plain_todo_mcp/storage.py [FRONT_MATTER, TodoStore.read, check_working_memory, parse_tasks, check_task_sections, with_link]; src/plain_todo_mcp/server.py [EXPORT_WORKFLOW] -->
 
 When present, the Working Memory section must follow these rules:
 

@@ -118,7 +118,8 @@ def build_server(repo: Path) -> MCPServer:
         them as evidence for open tasks that may already be finished.
         due_tasks lists open tasks whose 'Check after:' date has arrived.
         Folders linked under '## Subdirectory Todos' keep their own file:
-        pass one as directory to read or export it.
+        pass one as directory to read or export it. content omits the
+        file's front matter, which export_todo writes itself.
         """
         try:
             store = TodoStore(repo, directory)
@@ -166,7 +167,8 @@ def build_server(repo: Path) -> MCPServer:
         finished work moved into the tasks. Add only tasks the user
         requested or agreed to, and never save secrets: this file may be
         committed to git. Saving a subdirectory's file links it from the
-        root file, and root exports must keep those links.
+        root file, and root exports must keep those links. The server
+        writes the file's front matter; leave it out of content.
         """
         try:
             store = TodoStore(repo, directory)

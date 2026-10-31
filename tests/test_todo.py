@@ -16,10 +16,12 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 from plain_todo_mcp.server import EXPORT_WORKFLOW, build_server
 from plain_todo_mcp.storage import (
+    FRONT_MATTER,
     TodoConflictError,
     TodoStore,
     due_tasks,
     resolve_repo,
+    strip_front_matter,
 )
 
 
@@ -55,6 +57,50 @@ def test_create_and_merge(tmp_path: Path) -> None:
     assert "- [x] Verified task" in updated["content"]
     assert "- [ ] Existing task" in updated["content"]
     assert store.export(merged, updated["revision"]) == updated
+
+
+def test_front_matter_is_written_and_hidden_from_reads(tmp_path: Path) -> None:
+    store = TodoStore(tmp_path)
+    body = "# Agent Todo\n\n- [ ] Task\n"
+    saved = store.export(body, "missing")
+    assert store.path.read_bytes() == (FRONT_MATTER + body).encode("utf-8")
+    assert saved["content"] == body
+    assert "export_todo" in FRONT_MATTER
+    # Sending the block back, or an edited one, never duplicates it.
+    edited = "---\nmanaged_by: someone\n---\n\n" + body
+    again = store.export(FRONT_MATTER + body, saved["revision"])
+    assert again == saved
+    assert store.export(edited, saved["revision"]) == saved
+
+
+def test_existing_file_gains_front_matter_on_export(tmp_path: Path) -> None:
+    store = TodoStore(tmp_path)
+    body = "# Agent Todo\n\n- [ ] Hand-written task\n"
+    store.path.write_bytes(body.encode("utf-8"))
+    first = store.read()
+    assert first["content"] == body
+    saved = store.export(first["content"], first["revision"])
+    assert saved["revision"] != first["revision"]
+    assert store.path.read_text(encoding="utf-8").startswith(FRONT_MATTER)
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "- [ ] No front matter\n",
+        "---\n# Agent Todo\n\n- [ ] Rule before the title\n",
+        "---\n- [ ] Task\n---\n",
+        "Intro\n---\nkey: value\n---\n",
+    ],
+)
+def test_body_without_front_matter_is_kept(content: str) -> None:
+    assert strip_front_matter(content) == content
+
+
+def test_crlf_front_matter_is_stripped() -> None:
+    assert strip_front_matter("---\r\nkey: v\r\n---\r\n\r\n- [ ] T\r\n") == (
+        "- [ ] T\r\n"
+    )
 
 
 def test_stale_revision_preserves_file(tmp_path: Path) -> None:
@@ -231,6 +277,8 @@ def test_subdirectory_without_root_file_creates_root(tmp_path: Path) -> None:
         "# Agent Todo\n\n## Subdirectory Todos\n\n"
         "- [engine](engine/AGENT_TODO.md)\n"
     )
+    root_text = (tmp_path / "AGENT_TODO.md").read_text(encoding="utf-8")
+    assert root_text.startswith(FRONT_MATTER)
 
 
 def test_root_export_must_keep_live_links(tmp_path: Path) -> None:
@@ -407,7 +455,7 @@ def test_stdio_client_roundtrip(tmp_path: Path) -> None:
                 assert stale.is_error
                 assert "changed" in stale.content[0].text
         assert (tmp_path / "AGENT_TODO.md").read_text() == (
-            "# Agent Todo\n\n- [ ] Ship tested export\n"
+            FRONT_MATTER + "# Agent Todo\n\n- [ ] Ship tested export\n"
         )
 
     asyncio.run(exercise())

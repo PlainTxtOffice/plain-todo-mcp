@@ -52,8 +52,10 @@ include = ["plain_todo_mcp*"]
 # Keep pytest temp folders in the system temp folder, outside this Git repo,
 # so code that looks for an enclosing repository root never finds this one.
 addopts = "-s"
+pythonpath = ["."]
 testpaths = ["tests"]
 tmp_path_retention_policy = "none"
+cache_dir = "$PYTEST_ACCOUNT_ROOT/cache"
 
 [tool.ruff]
 line-length = 80

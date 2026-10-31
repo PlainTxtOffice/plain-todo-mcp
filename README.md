@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-10-28
+last_updated: 2026-10-31
 ---
 
 <!-- Authoring guidance: dev-docs/specs/README_SPEC.instructions.md -->
@@ -36,6 +36,8 @@ conversation, decides what goes in it.
 - Schedule tasks to revisit with `Check after:` dates, and park blocked work
   in a Waiting section that comes back when its date arrives.
 - Give a subfolder its own `AGENT_TODO.md`, linked from the repo's root file.
+- Mark each saved file with front matter telling agents that open it directly
+  to go through the server, while you stay free to edit it by hand.
 - Write safely: an export based on an out-of-date read is rejected rather
   than overwriting someone else's changes, and malformed lists are refused.
 

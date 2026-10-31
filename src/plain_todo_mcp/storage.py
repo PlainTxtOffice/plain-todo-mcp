@@ -25,6 +25,33 @@ MAX_WORKING_MEMORY_LINES = 12
 SUBDIRECTORY_HEADING = "## Subdirectory Todos"
 TODO_LINK = re.compile(r"\]\(<?([^)<>]*AGENT_TODO\.md)>?\)")
 NEXT_SECTION = re.compile(r"(?m)^#{1,2}[ \t]")
+# Written above every saved document so an agent that opens the file
+# directly learns to go through the server. People may still edit by hand.
+FRONT_MATTER = (
+    "---\n"
+    "managed_by: plain-todo-mcp\n"
+    "agent_instructions: >-\n"
+    "  Agents change this file only through the plain-todo MCP server: call\n"
+    "  read_todo, merge, then export_todo with the revision it returned.\n"
+    "  People may edit it by hand. The server rewrites this block.\n"
+    "---\n\n"
+)
+# A leading YAML block: a '---' line, then lines up to the next '---' line
+# with no Markdown heading or task between, so a body is never cut.
+LEADING_FRONT_MATTER = re.compile(
+    r"\A---[ \t]*\r?\n"
+    r"(?:(?!#{1,6}[ \t]|[ \t]*- \[[ xX]\]|---[ \t]*\r?(?:\n|\Z)).*\n)*"
+    r"---[ \t]*\r?(?:\n|\Z)(?:[ \t]*\r?\n)*"
+)
+
+
+def strip_front_matter(content: str) -> str:
+    """Remove a leading YAML front matter block and the blank lines after it.
+
+    Text without one, or whose leading '---' is not closed before a heading
+    or task, is returned unchanged.
+    """
+    return LEADING_FRONT_MATTER.sub("", content, count=1)
 
 
 def check_working_memory(content: str) -> None:
@@ -254,14 +281,25 @@ class TodoStore:
         """Whether this document covers a subdirectory, not the repo."""
         return self.path.parent != self.repo
 
-    def read(self) -> TodoSnapshot:
-        """Read UTF-8 Markdown and a hash of its exact bytes."""
+    def _read_bytes(self) -> bytes | None:
+        """Return the document's exact bytes, or None when it is missing."""
         if self.path.is_symlink():
             message = "AGENT_TODO.md must not be a symbolic link."
             raise ValueError(message)
         try:
-            raw = self.path.read_bytes()
+            return self.path.read_bytes()
         except FileNotFoundError:
+            return None
+
+    def read(self) -> TodoSnapshot:
+        """Read UTF-8 Markdown and a hash of its exact bytes.
+
+        The content leaves out the front matter the server writes, so agents
+        neither spend tokens on it nor need to send it back; the revision
+        still covers every byte of the file.
+        """
+        raw = self._read_bytes()
+        if raw is None:
             return {
                 "path": str(self.path),
                 "exists": False,
@@ -271,7 +309,7 @@ class TodoStore:
         return {
             "path": str(self.path),
             "exists": True,
-            "content": raw.decode("utf-8"),
+            "content": strip_front_matter(raw.decode("utf-8")),
             "revision": hashlib.sha256(raw).hexdigest(),
         }
 
@@ -310,7 +348,12 @@ class TodoStore:
         return result.stdout.splitlines()
 
     def export(self, content: str, expected_revision: str) -> TodoSnapshot:
-        """Save merged Markdown only if the observed revision still matches."""
+        """Save merged Markdown only if the observed revision still matches.
+
+        Front matter sent with the content is dropped; the server writes its
+        own block above the saved Markdown.
+        """
+        content = strip_front_matter(content)
         if not re.search(r"(?m)^- \[[ xX]\] \S", content):
             message = (
                 "Provide Markdown with at least one '- [ ]' or '- [x]' task."
@@ -330,7 +373,8 @@ class TodoStore:
             check_kept_links(
                 current["content"], normalized, self.path.parent.resolve()
             )
-            if current["content"] != normalized:
+            saved = self._read_bytes()
+            if saved != (FRONT_MATTER + normalized).encode("utf-8"):
                 self._replace(normalized)
                 current = self.read()
         if self.in_subdirectory:
@@ -351,7 +395,10 @@ class TodoStore:
             self._replace(with_link(content, f"- [{label}]({target})"))
 
     def _replace(self, normalized: str) -> None:
-        """Atomically replace the document; callers hold the lock."""
+        """Atomically replace the document with the front matter and Markdown.
+
+        Callers hold the lock and pass the Markdown without front matter.
+        """
         temp_path: Path | None = None
         try:
             with tempfile.NamedTemporaryFile(
@@ -364,7 +411,7 @@ class TodoStore:
                 delete=False,
             ) as temp:
                 temp_path = Path(temp.name)
-                temp.write(normalized)
+                temp.write(FRONT_MATTER + normalized)
                 temp.flush()
                 os.fsync(temp.fileno())
             temp_path.replace(self.path)
