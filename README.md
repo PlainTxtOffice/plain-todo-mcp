@@ -1,7 +1,4 @@
----
-last_updated: 2026-10-31
----
-
+<!-- last_updated: 2026-11-19 -->
 <!-- Authoring guidance: dev-docs/specs/README_SPEC.instructions.md -->
 <!-- rumdl-disable MD033 MD041 -->
 <h1 align="center">Plain Todo</h1>
@@ -9,6 +6,12 @@ last_updated: 2026-10-31
 <p align="center">
   An MCP server that lets AI coding agents turn a conversation into tasks in
   a plain Markdown <code>AGENT_TODO.md</code> file kept in your repo.
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/plain-todo-mcp/"><img src="https://img.shields.io/pypi/v/plain-todo-mcp?label=pypi" alt="Latest version on PyPI"></a>
+  <a href="https://pypi.org/project/plain-todo-mcp/"><img src="https://img.shields.io/pypi/pyversions/plain-todo-mcp" alt="Supported Python versions"></a>
+  <a href="https://github.com/PlainTxtOffice/plain-todo-mcp/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-informational" alt="License: MIT"></a>
 </p>
 <!-- rumdl-enable MD033 MD041 -->
 
@@ -41,7 +44,50 @@ conversation, decides what goes in it.
 - Write safely: an export based on an out-of-date read is rejected rather
   than overwriting someone else's changes, and malformed lists are refused.
 
+## Tools
+
+| Tool | What it does | Changes files |
+| --- | --- | --- |
+| `read_todo` | Reads `AGENT_TODO.md` with its revision, tasks that are due, and commits since it was last saved. | No |
+| `export_todo` | Saves the merged list, refusing it if the file changed since `read_todo`. | Yes |
+
+## Quick Start
+
+The server needs [uv](https://docs.astral.sh/uv/) and Python 3.12 or later;
+`uvx` downloads and starts it on demand:
+
+```shell
+uvx plain-todo-mcp
+```
+
+Started by hand, it waits for an MCP client on stdin; press Ctrl+C to stop.
+Normally your client starts it. For Claude Code, add `.mcp.json` to the repo:
+
+```json
+{
+  "mcpServers": {
+    "plain-todo": {
+      "command": "uvx",
+      "args": ["plain-todo-mcp"]
+    }
+  }
+}
+```
+
+Then ask the agent to export the conversation to `AGENT_TODO.md`. The user
+manual covers Codex, Cursor, VS Code, and the settings.
+
 ## User Manual
 
-See the [User Manual](docs/USER_MANUAL.md) for installation, setup, usage,
-and troubleshooting.
+See the
+[User Manual](https://github.com/PlainTxtOffice/plain-todo-mcp/blob/main/docs/USER_MANUAL.md)
+for installation, client configuration, tools, settings, and troubleshooting.
+
+## Feedback
+
+Report bugs and request features in
+[GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
+
+## License
+
+[MIT](https://github.com/PlainTxtOffice/plain-todo-mcp/blob/main/LICENSE)

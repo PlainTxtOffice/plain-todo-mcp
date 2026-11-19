@@ -1,6 +1,6 @@
 ---
-last_updated: 2026-10-31
-version: 1.2.0
+last_updated: 2026-11-19
+version: 1.3.0
 product_version: "0.5.0"
 generated_from: "dev-docs/specs/USER_MANUAL_SPEC.instructions.md"
 ---
@@ -678,6 +678,14 @@ no recent commits; everything else works.
 That is up to you. Commit it to share the list, or ignore it to keep it
 local. Always ignore `AGENT_TODO.md.lock`.
 <!-- Verified from: src/plain_todo_mcp/server.py [EXPORT_WORKFLOW]; src/plain_todo_mcp/storage.py [TodoStore.__init__] -->
+
+### How do I report a bug or request a feature?
+
+Open an issue in
+[GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
+Include the server version, your MCP client, and the steps that led to the
+problem.
+<!-- Verified from: pyproject.toml [project.urls] -->
 
 ## Glossary
 
