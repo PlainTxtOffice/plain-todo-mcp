@@ -468,9 +468,11 @@ folder, such as one component of a larger repo.
 
 1. Ask the agent, for example: "Keep the custom_pdf_engine tasks in their
    own AGENT_TODO.md in platform/windows/custom_pdf_engine."
+
 1. The agent passes the folder, relative to the repo root, as `directory` to
    both `read_todo` and `export_todo`. The folder must already exist inside
    the repo.
+
 1. On the first export, the server adds a link to the new file in the root
    `AGENT_TODO.md`, creating the root file if needed:
 
