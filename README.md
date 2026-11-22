@@ -85,7 +85,9 @@ for installation, client configuration, tools, settings, and troubleshooting.
 
 ## Feedback
 
-Report bugs and request features in
+Send bug reports and feature requests to
+[support@plaintxtoffice.com](mailto:support@plaintxtoffice.com), through the
+[contact page](https://plaintxtoffice.com/contact/), or in
 [GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
 
 ## License

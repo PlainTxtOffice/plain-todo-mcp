@@ -683,11 +683,13 @@ local. Always ignore `AGENT_TODO.md.lock`.
 
 ### How do I report a bug or request a feature?
 
-Open an issue in
+Send bug reports and feature requests to
+[support@plaintxtoffice.com](mailto:support@plaintxtoffice.com), through the
+[contact page](https://plaintxtoffice.com/contact/), or in
 [GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
 Include the server version, your MCP client, and the steps that led to the
 problem.
-<!-- Verified from: pyproject.toml [project.urls] -->
+<!-- Verified from: pyproject.toml [project.urls, project.maintainers]; https://plaintxtoffice.com/contact/ -->
 
 ## Glossary
 
