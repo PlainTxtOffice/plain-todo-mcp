@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Generated from icon.svg by scripts/make-github-readme-icon.py.
+  Do not edit by hand: change the master icon and rerun the script.
+  The master is nested unchanged inside a rounded-corner clip path
+  because GitHub strips CSS from README images.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16 16 480 480" width="512" height="512">
+  <defs>
+    <clipPath id="github-readme-corners">
+      <rect x="16" y="16" width="480" height="480" rx="105.6" ry="105.6"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#github-readme-corners)">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16 16 480 480" fill="none" role="img" aria-labelledby="title desc" x="16" y="16" width="480" height="480">
+  <title id="title">Plain Todo MCP</title>
+  <desc id="desc">A white text document with a three-item checklist, two items ticked in teal, on a navy square.</desc>
+  <rect x="16" y="16" width="480" height="480" fill="#122C3A"/>
+  <path d="M152 88H304L384 168V400C384 413.255 373.255 424 360 424H152C138.745 424 128 413.255 128 400V112C128 98.745 138.745 88 152 88Z" fill="#F5F8F7"/>
+  <path d="M304 88V144C304 157.255 314.745 168 328 168H384L304 88Z" fill="#B9D1D5"/>
+  <g stroke="#122C3A" stroke-width="12" stroke-linejoin="round">
+    <rect x="164" y="186" width="44" height="44" rx="10" fill="#32D5B4"/>
+    <rect x="164" y="262" width="44" height="44" rx="10" fill="#32D5B4"/>
+    <rect x="164" y="338" width="44" height="44" rx="10" fill="#F5F8F7"/>
+  </g>
+  <path d="M175 208L183 216L198 199M175 284L183 292L198 275" stroke="#122C3A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M240 208H336M240 284H320M240 360H304" stroke="#122C3A" stroke-width="16" stroke-linecap="round"/>
+</svg>
+  </g>
+</svg>

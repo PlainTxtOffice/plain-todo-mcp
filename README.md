@@ -1,6 +1,10 @@
-<!-- last_updated: 2026-11-19 -->
+<!-- last_updated: 2026-11-22 -->
 <!-- Authoring guidance: dev-docs/specs/README_SPEC.instructions.md -->
 <!-- rumdl-disable MD033 MD041 -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/PlainTxtOffice/plain-todo-mcp/main/assets/icons/icon-github-readme.svg" alt="Plain Todo icon: a text document with a three-item checklist" width="96">
+</p>
+
 <h1 align="center">Plain Todo</h1>
 
 <p align="center">
