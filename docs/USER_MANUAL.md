@@ -1,6 +1,6 @@
 ---
-last_updated: 2026-11-19
-version: 1.3.0
+last_updated: 2026-11-22
+version: 1.4.0
 product_version: "0.5.0"
 generated_from: "dev-docs/specs/USER_MANUAL_SPEC.instructions.md"
 ---
@@ -21,8 +21,7 @@ or another MCP client and want a to-do list that outlives a single chat. The
 list is plain text: you can read and edit it yourself and keep it in git.
 
 Checked with: Claude Code and Codex. Cursor and VS Code use the same command
-with each client's documented configuration format; whether they have been
-checked is Unknown.
+with each client's documented configuration format.
 <!-- Verified from: .mcp.json; .codex/config.toml -->
 
 The server cannot see your conversation. The agent decides which tasks to
@@ -681,15 +680,15 @@ That is up to you. Commit it to share the list, or ignore it to keep it
 local. Always ignore `AGENT_TODO.md.lock`.
 <!-- Verified from: src/plain_todo_mcp/server.py [EXPORT_WORKFLOW]; src/plain_todo_mcp/storage.py [TodoStore.__init__] -->
 
-### How do I report a bug or request a feature?
+## Feedback
 
 Send bug reports and feature requests to
 [support@plaintxtoffice.com](mailto:support@plaintxtoffice.com), through the
 [contact page](https://plaintxtoffice.com/contact/), or in
 [GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
 Include the server version, your MCP client, and the steps that led to the
-problem.
-<!-- Verified from: pyproject.toml [project.urls, project.maintainers]; https://plaintxtoffice.com/contact/ -->
+problem. The server has no feedback tool of its own.
+<!-- Verified from: pyproject.toml [project.urls, project.maintainers]; src/plain_todo_mcp/server.py [build_server]; https://plaintxtoffice.com/contact/; GitHub repository PlainTxtOffice/plain-todo-mcp [issues enabled] -->
 
 ## Glossary
 
