@@ -683,7 +683,7 @@ local. Always ignore `AGENT_TODO.md.lock`.
 ## Feedback
 
 Send bug reports and feature requests to
-[support@plaintxtoffice.com](mailto:support@plaintxtoffice.com), through the
+[feedback@plaintxtoffice.com](mailto:feedback@plaintxtoffice.com), through the
 [contact page](https://plaintxtoffice.com/contact/), or in
 [GitHub Issues](https://github.com/PlainTxtOffice/plain-todo-mcp/issues).
 Include the server version, your MCP client, and the steps that led to the
